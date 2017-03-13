@@ -40,18 +40,36 @@ Player.prototype.update = function(dt) {
         this.y = this.y - 82;
     } else if(this.keyPress === 'down' && this.y < 400) {
         this.y = this.y + 82;
+    } else if(this.keyPress === 'space') {
+        this.reset();
     } else {
     }
     this.keyPress = null;
 };
 
+Player.prototype.reset = function() {
+    this.x = 200;  //reset to initial starting point
+    this.y = 400;  //reset to initial starting point
+};
+
+
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    var collisionX = Math.abs(player.x - this.x);
+    var collisionY = Math.abs(player.y - this.y);
+    if( collisionX < 25 && collisionY < 25) {
+        ctx.fillText("OUCH!", 505/2, 200);
+        player.reset();
+    }
 };
+
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    if(this.y < 70) {  //made it to the water - you win
+        ctx.fillText("YOU WIN", 505/2, 200);
+    }
 };
 
 // Now write your own player class
@@ -76,11 +94,13 @@ document.addEventListener('keyup', function(e) {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
+        32: 'space'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
 
 function addEnemies() {
   allEnemies.push(new Enemy(-2, 60));
